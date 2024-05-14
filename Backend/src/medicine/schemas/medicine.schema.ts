@@ -15,11 +15,10 @@ export class Medicine{
     /* save() {
         throw new Error('Method not implemented.');
     } */
-    // @Prop({ type: Types.ObjectId })
-    // _id: Types.ObjectId;
 
     @Prop()    
     title: string;
+
     @Prop()
     detail: string;
 

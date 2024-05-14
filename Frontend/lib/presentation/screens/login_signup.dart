@@ -39,6 +39,7 @@ class LoginPage extends StatelessWidget {
           'password': password,
         }
         ),);
+      print(response.body);
       print(response.statusCode);
       if (response.statusCode == 201){
         final Map<String, dynamic> data = jsonDecode(response.body);
@@ -46,10 +47,11 @@ class LoginPage extends StatelessWidget {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', data['token']);
         bool role = data['Role'] == 'Pharmacist';
+        String id = data['id'];
 
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MainPharmaPage(isPharmacist: role)),
+          MaterialPageRoute(builder: (context) => MainPharmaPage(isPharmacist: role, user_id:id)),
         );
       }else{
         showDialog(context: context, builder: (BuildContext context){
@@ -207,10 +209,12 @@ class SignupPage extends StatelessWidget {
         }
         ),);
       bool isPharmacist = role == 'Pharmacist';
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      String id = data['_id'];
       if (response.statusCode == 201){
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MainPharmaPage(isPharmacist: isPharmacist)),
+          MaterialPageRoute(builder: (context) => MainPharmaPage(isPharmacist: isPharmacist, user_id: id,)),
         );
       }else{
         print(response.statusCode);

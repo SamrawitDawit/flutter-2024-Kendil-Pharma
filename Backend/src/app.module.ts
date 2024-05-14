@@ -8,6 +8,9 @@ import { AuthModule } from './auth/auth.module';
 import { MedicineModule } from './medicine/medicine.module';
 import { RoleGuard } from './auth/role.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { MiddlewareConsumer, NestModule } from '@nestjs/common';
+import { AuthMiddleware } from './auth/auth.middleware';
+
 
 
 @Module({
@@ -19,11 +22,17 @@ import { APP_GUARD } from '@nestjs/core';
     MongooseModule.forRoot(process.env.DB_URI),
     OrderModule, AuthModule, MedicineModule],
   controllers: [AppController],
-  providers: [AppService, 
+  providers: [AppService,
   {
     provide: APP_GUARD,
     useClass: RoleGuard,
   }
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes('*'); // Apply the middleware to all routes
+  }
+}

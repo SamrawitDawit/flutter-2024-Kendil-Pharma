@@ -10,9 +10,11 @@ import '../widget/KendilAppBar.dart';
 
 class OrderScreen extends StatefulWidget {
   final bool is_user;
+  final String user_id;
   const OrderScreen({
     Key? key,
-    required this.is_user
+    required this.is_user,
+    required this.user_id,
   }) : super(key: key);
 
 
@@ -119,10 +121,11 @@ class OrderCard extends StatelessWidget {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => OrderPage(isEditing: true))
-                            );},
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(builder: (context) => OrderPage(isEditing: true))
+                            // );
+                            },
                           child: Text('Edit'),
                         ),
                         ElevatedButton(

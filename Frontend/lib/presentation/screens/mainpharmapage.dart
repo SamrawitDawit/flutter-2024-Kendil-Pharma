@@ -7,8 +7,9 @@ import 'pharmacat.dart';
 import 'useraccount.dart';
 
 class MainPharmaPage extends StatelessWidget {
+  final String user_id;
   final bool isPharmacist;
-  const MainPharmaPage({super.key, required this.isPharmacist});
+  const MainPharmaPage({super.key, required this.isPharmacist, required this.user_id});
 
 @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class MainPharmaPage extends StatelessWidget {
                   SizedBox(height: 10),
                   const  PharmaPageBody(),
                   SizedBox(height: 10),
-                  ListOFMedicine(isPharmacist: isPharmacist,)
+                  ListOFMedicine(isPharmacist: isPharmacist, user_id: user_id)
                 ],
               ),
             ),
@@ -43,17 +44,17 @@ class MainPharmaPage extends StatelessWidget {
           if (index == 0) {
               Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MainPharmaPage(isPharmacist: isPharmacist)),
+              MaterialPageRoute(builder: (context) => MainPharmaPage(isPharmacist: isPharmacist, user_id: user_id,)),
             );
           } else if (index == 1) {
               Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => OrderScreen(is_user: !isPharmacist)),
+              MaterialPageRoute(builder: (context) => OrderScreen(is_user: !isPharmacist, user_id: user_id,)),
             );
           } else if (index == 2) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => UserAccount()));
+              MaterialPageRoute(builder: (context) => UserAccount(user_id: user_id)));
           }
         },
       ),

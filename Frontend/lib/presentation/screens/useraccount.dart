@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import '../widget/KendilAppBar.dart';
 import 'useraccountedit.dart';
 
-void main() {
-  runApp(const MaterialApp(
-    home: UserAccount(),
-  ));
-}
+// void main() {
+//   runApp(const MaterialApp(
+//     home: UserAccount(),
+//   ));
+// }
 class UserAccount extends StatefulWidget {
-  const UserAccount({super.key});
+  final String user_id;
+  const UserAccount({Key? key, required this.user_id});
 
   @override
   State<UserAccount> createState() => _UserAccount();

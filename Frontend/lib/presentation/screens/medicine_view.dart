@@ -11,10 +11,12 @@ import 'useraccount.dart';
 class MedicineViewPage extends StatelessWidget {
   final MedicineItem medicineItem;
   final bool isPharmacist;
+  final String user_id;
 
   MedicineViewPage({
     required this.medicineItem,
     required this.isPharmacist,
+    required this.user_id,
   });
 
   @override
@@ -135,7 +137,7 @@ class MedicineViewPage extends StatelessWidget {
                 // Navigate to the Order page
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => OrderPage(isEditing: false)),
+                  MaterialPageRoute(builder: (context) => OrderPage(isEditing: false, medicineId: medicineItem.med_id, user_id: user_id,)),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -167,7 +169,7 @@ class MedicineViewPage extends StatelessWidget {
             if (index == 0) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ListOFMedicine(isPharmacist: isPharmacist)),
+                MaterialPageRoute(builder: (context) => ListOFMedicine(isPharmacist: isPharmacist, user_id: user_id,)),
               );
             } else if (index == 1) {
               bool user;
@@ -177,12 +179,12 @@ class MedicineViewPage extends StatelessWidget {
                 user = true;
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => OrderScreen(is_user: user)),
+                MaterialPageRoute(builder: (context) => OrderScreen(is_user: user, user_id: user_id,)),
               );
             } else if (index == 2) {
               Navigator.push(
                 context, 
-                MaterialPageRoute(builder: (context)=> UserAccount()));
+                MaterialPageRoute(builder: (context)=> UserAccount(user_id: user_id,)));
             }
           },
         ),

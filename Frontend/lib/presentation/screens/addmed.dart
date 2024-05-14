@@ -4,17 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:newcompiled/presentation/screens/mainpharmapage.dart';
 import '../widget/KendilAppBar.dart';
 import 'package:http/http.dart' as http;
-void main() {
-  runApp(MaterialApp(home: AddMedicineScreen()));
-}
+// void main() {
+//   runApp(MaterialApp(home: AddMedicineScreen()));
+// }
 
 class AddMedicineScreen extends StatelessWidget {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _categoryController = TextEditingController();
+  final String user_id;
+  AddMedicineScreen({required this.user_id});
   @override
   Widget build(BuildContext context) {
+
     Future<void> addMed(String title, String description, String price, String category) async{
 
       final response = await http.post(
@@ -31,7 +34,7 @@ class AddMedicineScreen extends StatelessWidget {
       if (response.statusCode == 201){
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MainPharmaPage(isPharmacist: true)),
+          MaterialPageRoute(builder: (context) => MainPharmaPage(isPharmacist: true, user_id: user_id,)),
         );
       }else{
         print(response.statusCode);

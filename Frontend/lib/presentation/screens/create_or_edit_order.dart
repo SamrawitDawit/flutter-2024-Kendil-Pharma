@@ -1,18 +1,25 @@
 
 // ignore_for_file: unused_local_variable
 
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:newcompiled/presentation/screens/order_list.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widget/KendilAppBar.dart';
+import 'package:http/http.dart' as http;
+
 
 // void main() {
 //   runApp(MaterialApp(home: OrderPage()));
 // }
 class OrderPage extends StatefulWidget {
   final bool isEditing;
+  final String? medicineId;
   final int?  amount;
   final DateTime?  date;
-  OrderPage({required this.isEditing, this.amount,  this.date});
+  final String user_id;
+  OrderPage({required this.isEditing, required this.medicineId, this.amount,  this.date, required this.user_id});
 
   @override
   State<OrderPage> createState() => _OrderPageState();
@@ -21,6 +28,7 @@ class OrderPage extends StatefulWidget {
 class _OrderPageState extends State<OrderPage> {
   TextEditingController  _amountController = TextEditingController();
   TextEditingController  _dateController = TextEditingController();
+
 
 
   @override
@@ -37,6 +45,45 @@ class _OrderPageState extends State<OrderPage> {
 
   @override
   Widget build(BuildContext context) {
+    final String user_id = widget.user_id;
+    Future<void> storeToken(String token) async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
+    }
+
+    Future<String?> getToken() async {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('token');
+    }
+    Future<void> createOrder(String quantity, String date) async{
+      final String medicineId = widget.medicineId!;
+      final token = await getToken();
+      final response = await http.post(
+          Uri.parse('http://10.0.2.2:3000/orders/create'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            // 'Authorization': 'Bearer $token'
+          },
+          body: jsonEncode(<String, String>{
+            'medicineId': medicineId,
+            'quantity': quantity,
+            'date': date,
+            'userId': user_id,
+          },));
+
+      if (response.statusCode == 201){
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => OrderScreen(is_user: true, user_id: user_id,)),
+        );
+      }else{
+        print(user_id);
+        print(response.body);
+      }
+    }
+
+
     return Scaffold(
       appBar: KendilAppBar(title: Text(isEditing ? 'Edit Order': 'Create Order')),
       body: Padding(
@@ -73,10 +120,10 @@ class _OrderPageState extends State<OrderPage> {
             SizedBox(height: 35.0,),
             ElevatedButton(
               onPressed: () {
-                String amount = _amountController.text.trim();
+                String quantity = _amountController.text.trim();
                 String date = _dateController.text.trim();
 
-                if (amount.isEmpty || date.isEmpty) {
+                if (quantity.isEmpty || date.isEmpty) {
                 // Show error message if any of the fields are empty
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Please fill all fields')),
@@ -85,12 +132,14 @@ class _OrderPageState extends State<OrderPage> {
                   // Proceed with creating or editing the order
                   if (isEditing) {
                       // Editing logic
-                      int? updateAmount = int.tryParse(amount);
+                      int? updateAmount = int.tryParse(quantity);
                       DateTime updatedDate = DateTime.parse(date);
                   } else {
                     // Creating logic
-                    int? new_amount = int.tryParse(amount);
-                    DateTime new_date = DateTime.parse(date);
+
+                    String new_amount = quantity.toString();
+                    String new_date = date.toString();
+                    createOrder(new_amount, new_date);
                   }
                 }
                 },

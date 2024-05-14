@@ -3,17 +3,16 @@ import { User } from "src/auth/schemas/user.schema";
 import { Medicine } from "src/medicine/schemas/medicine.schema";
 
 export class CreateOrderDto { 
+    @IsNotEmpty()
+    readonly medicineId: Medicine;
 
     @IsNotEmpty()
-    @IsNumber()
     readonly quantity: String;
 
     @IsNotEmpty()
-    readonly order_date: String;
+    readonly date: String;
 
     @IsEmpty()
-    readonly user: User
+    readonly userId: User
 
-    // @IsEmpty()
-    // readonly medicine: Medicine
 }

@@ -14,6 +14,7 @@ import 'package:http/http.dart' as http;
 class MedicineItem {
   // final String imagePath;
   final String title;
+  final String med_id;
   final String description;
   final String price;
   final String category;
@@ -21,6 +22,7 @@ class MedicineItem {
   MedicineItem({
     // required this.imagePath,
     required this.title,
+    required this.med_id,
     required this.description,
     required this.price,
     required this.category,
@@ -28,8 +30,9 @@ class MedicineItem {
 }
 class ListOFMedicine extends StatelessWidget {
   final bool isPharmacist;
+  final String user_id;
 
-  ListOFMedicine({Key? key, required this.isPharmacist}) : super(key: key);
+  ListOFMedicine({Key? key, required this.isPharmacist, required this.user_id}) : super(key: key);
 
   static Future<List<MedicineItem>> fetchMedicines() async {
     final response = await http.get(Uri.parse('http://10.0.2.2:3000/medicines/all'));
@@ -37,6 +40,7 @@ class ListOFMedicine extends StatelessWidget {
       final List<dynamic> data = jsonDecode(response.body);
       final List<MedicineItem> medicineItems = data.map((item) => MedicineItem(
         title: item['title'],
+        med_id: item['_id'],
         description: item['detail'],
         price: 'Price: ${item['price']} Birr',
         category: 'Category: ${item['category']}',
@@ -75,7 +79,7 @@ class ListOFMedicine extends StatelessWidget {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => AddMedicineScreen()
+                                    builder: (context) => AddMedicineScreen(user_id: user_id,)
                                 ));
                             },
                           child: Padding(
@@ -118,6 +122,7 @@ class ListOFMedicine extends StatelessWidget {
                           builder: (context) => MedicineViewPage(
                             medicineItem: item1,
                             isPharmacist: isPharmacist,
+                            user_id: user_id,
                           ),
                         ),
                       );

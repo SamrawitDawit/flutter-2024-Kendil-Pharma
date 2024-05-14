@@ -3,7 +3,7 @@ import { Category } from "../schemas/medicine.schema"
 import { ObjectId, Types } from "mongoose";
 
 export class CreateMedicineDto{
-     // _id: Types.ObjectId;
+
 
      @IsNotEmpty()
      @IsString()
