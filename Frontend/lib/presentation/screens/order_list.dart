@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:newcompiled/presentation/screens/create_or_edit_order.dart';
+import 'package:newcompiled/presentation/screens/listmedicince.dart';
 import '../widget/KendilAppBar.dart';
-
+import 'package:http/http.dart' as http;
 
 // void main() {
 //   runApp(MaterialApp(home: OrderScreen()));
@@ -21,19 +24,63 @@ class OrderScreen extends StatefulWidget {
 
   @override
   _OrderScreenState createState() => _OrderScreenState();
+
 }
 
 class _OrderScreenState extends State<OrderScreen> {
-  List<Order> orders = [
-    Order('Medicine 1', DateTime(2024, 11, 7)),
-    Order('Medicine 2', DateTime(2024, 11, 8)),
-    Order('Medicine 3', DateTime(2024, 11, 9)),
-    Order('Medicine 4', DateTime(2024, 11, 10)),
-    Order('Medicine 5', DateTime(2024, 11, 11)),
-  ];
+  static Future<String> getMedicine(med_id) async {
 
+    final response = await http.get(Uri.parse('http://10.0.2.2:3000/medicines/${med_id}'));
+    if (response.statusCode == 200) {
+      // print(response.body);
+      final dynamic data = jsonDecode(response.body);
+
+      // Extract the medicine title from the data
+      final String medTitle = data['title'].toString();
+
+      return medTitle;
+    } else {
+      throw Exception("Failed to load medicine: ${response.statusCode}");
+    }
+  }
+
+  static Future<List<Order>> fetchOrders(user_id) async {
+    final response = await http.get(Uri.parse('http://10.0.2.2:3000/orders/all'));
+    if (response.statusCode == 200) {
+      // print(response.body);
+      final List<dynamic> data = jsonDecode(response.body);
+      List<Order> orders = [];
+      // Loop through each order
+      for (var item in data) {
+        // Get the medicine title for the current order
+        if (item['userId'] == user_id) {
+          print(item);
+          String medTitle = await getMedicine(item['medicineId']);
+          orders.add(Order(medTitle, item['date']));
+        }
+      }
+      return orders;
+    } else {
+      throw Exception("Failed to load medicines: ${response.statusCode}");
+    }
+  }
   @override
   Widget build(BuildContext context) {
+
+
+    return FutureBuilder<List<Order>>(
+        future: fetchOrders(widget.user_id),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            final List<Order>? orders = snapshot.data;
+            if (orders == null || orders.isEmpty) {
+              return Center(child: Text('No orders found.'));
+            }
+
     return Scaffold(
       appBar: KendilAppBar(title: Text('My Orders')),
       body: Padding(
@@ -55,11 +102,11 @@ class _OrderScreenState extends State<OrderScreen> {
       ),
     );
   }
-}
+});}}
 
 class Order {
   final String medicine;
-  final DateTime date;
+  final String date;
 
   Order(this.medicine, this.date);
 }

@@ -72,7 +72,7 @@ class _OrderPageState extends State<OrderPage> {
           },));
 
       if (response.statusCode == 201){
-
+        print(response.body);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => OrderScreen(is_user: true, user_id: user_id,)),
