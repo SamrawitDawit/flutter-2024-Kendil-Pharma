@@ -210,14 +210,16 @@ class SignupPage extends StatelessWidget {
         ),);
       bool isPharmacist = role == 'Pharmacist';
       final Map<String, dynamic> data = jsonDecode(response.body);
-      String id = data['_id'];
+
       if (response.statusCode == 201){
+        print(response.body);
+        String id = data['id'];
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => MainPharmaPage(isPharmacist: isPharmacist, user_id: id,)),
         );
       }else{
-        print(response.statusCode);
+        print(response.body);
       }
     }
 

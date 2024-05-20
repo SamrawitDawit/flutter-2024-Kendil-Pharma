@@ -1,19 +1,17 @@
-import { IsDate, IsEmpty, IsNumber, IsOptional } from "class-validator";
+import { IsDate, IsEmpty, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 import { User } from "src/auth/schemas/user.schema";
 import { Medicine } from "src/medicine/schemas/medicine.schema";
 
 export class UpdateOrderDto {
+    @IsNotEmpty()
+    readonly medicineId: Medicine;
+
     @IsOptional()
-    @IsNumber()
     readonly quantity: String;
 
     @IsOptional()
-    // @IsDate()
-    readonly order_date: String;
+    readonly date: String;
 
-    @IsEmpty()
-    readonly user: User
-
-    // @IsEmpty()
-    // readonly medicine: Medicine
+    @IsNotEmpty()
+    readonly userId: User
 }

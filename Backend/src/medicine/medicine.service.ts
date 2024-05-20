@@ -3,6 +3,8 @@ import {NotFoundException} from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose';
 import * as  mongoose from 'mongoose';
 import { Medicine } from './schemas/medicine.schema';
+
+
 /* import { save } from './schemas/medicine.schema' */
 
 @Injectable()
@@ -23,7 +25,12 @@ export class MedicineService {
     }
 
     async findById(id:string): Promise<Medicine>{
-        const medicine = await this.medicineModel.findById(id)
+        const mongoose = require('mongoose');
+        const { ObjectId } = require('mongodb');
+
+        const objectId = new ObjectId(id);
+        const medicine = await this.medicineModel.findById(objectId)
+
 
         if(!medicine){
             throw new NotFoundException('Medicine not found')

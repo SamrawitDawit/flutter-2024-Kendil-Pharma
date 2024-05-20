@@ -12,7 +12,7 @@ export class CreateOrderDto {
     @IsNotEmpty()
     readonly date: String;
 
-    @IsEmpty()
+    @IsNotEmpty()
     readonly userId: User
 
 }

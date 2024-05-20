@@ -27,6 +27,6 @@ export const OrderSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   medicineId: { type: mongoose.Schema.Types.ObjectId, ref: 'Medicine' },
   quantity: {type: String},
-  Date: { type: String},
+  date: { type: String},
 });
 

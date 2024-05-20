@@ -42,7 +42,7 @@
 //     }
 // }
 //
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Order } from 'src/order/order.model';
@@ -57,11 +57,37 @@ export class OrderService {
     return createdOrder.save();
   }
 
-  async findAll(userId: string): Promise<Order[]> {
-    return this.orderModel.find({ userId }).exec();
-  }
+  // async findById(userId: string): Promise<Order[]> {
+  //   return this.orderModel.find({ userId }).exec();
+  // }
+  async findAll():Promise<Order[]>{
+    const order = await this.orderModel.find()
+    return order
+}
 
   async findAllForAdmin(): Promise<Order[]> {
     return this.orderModel.find().exec();
   }
+
+  async deleteById(id:string): Promise<Order>{
+    return await this.orderModel.findByIdAndDelete({_id:id},{
+        new:true
+    });
+}
+async update(id: String, UpdateOrderDto: Partial<Order>): Promise<Order> {
+  const { ObjectId } = require('mongodb');
+  const objectId = new ObjectId(id);
+
+  const order = await this.orderModel.findOne(objectId);
+
+  if (!order) {
+    throw new NotFoundException(`User with ID ${objectId} not found`);
+  }
+
+  // Update the fields that are present in updateUserDto
+  Object.assign(order, UpdateOrderDto);
+
+  await order.save();
+  return order;
+}
 }

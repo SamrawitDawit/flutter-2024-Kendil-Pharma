@@ -1,26 +1,28 @@
-import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
-import { AuthService } from '../auth/auth.service';
+// auth.middleware.ts
+import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
+import * as jwt from 'jsonwebtoken';
+
+interface JwtPayload {
+    // Define the structure of your JWT payload
+    // For example:
+    userId: string;
+    // Add other fields if present in your JWT payload
+}
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-  constructor(private authService: AuthService) {}
-
-  async use(req: Request, res: Response, next: NextFunction) {
-    const authHeader = req.headers['authorization'];
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new UnauthorizedException('Missing or invalid authorization token');
+    use(req: Request & { user?: JwtPayload }, res: Response, next: NextFunction) {
+        const authHeader = req.headers['authorization'];
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            const token = authHeader.split(' ')[1];
+            try {
+                const decoded = jwt.verify(token, 'your_secret_key') as JwtPayload;
+                req.user = decoded;
+            } catch (error) {
+                console.error('JWT verification failed:', error);
+            }
+        }
+        next();
     }
-
-    const token = authHeader.split(' ')[1];
-
-    try {
-      const decodedToken = this.authService.verifyToken(token);
-      req.user = decodedToken;
-      next();
-    } catch (error) {
-      throw new UnauthorizedException('Invalid authorization token');
-    }
-  }
 }

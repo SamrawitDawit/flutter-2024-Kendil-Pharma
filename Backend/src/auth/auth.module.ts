@@ -9,6 +9,7 @@ import { UserSchema } from './schemas/user.schema';
 import { ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt.strategy';
 
+
 @Module({
   imports:[
     PassportModule.register({ defaultStrategy: 'jwt'}),
