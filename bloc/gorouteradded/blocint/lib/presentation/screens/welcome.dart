@@ -1,6 +1,6 @@
-import 'package:blocint/presentation/screens/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
 void main() {
   runApp(PharmacyApp());
@@ -50,10 +50,7 @@ class WelcomePage extends StatelessWidget {
               SizedBox(height: 550),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SignupPage()),
-                  );
+                  context.go('/signup');       
                 },
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),

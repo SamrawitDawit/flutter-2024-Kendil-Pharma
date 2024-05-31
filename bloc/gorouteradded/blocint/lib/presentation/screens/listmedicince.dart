@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../bloc/listmedbloc/listmedbloc.dart';
 import '../../bloc/listmedbloc/listmedevent.dart';
 import '../../bloc/listmedbloc/listmedstate.dart';
-import 'editmed.dart';
-import 'addmed.dart';
-import 'medicine_view.dart';
 
 class ListOFMedicine extends StatefulWidget {
   final bool isPharmacist;
@@ -64,10 +62,7 @@ class _ListOFMedicineState extends State<ListOFMedicine> with RouteAware {
                     if (widget.isPharmacist)
                       GestureDetector(
                         onTap: () async {
-                          final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => AddMedicineScreen()),
-                          );
+                          final result = await context.push('/addmed');
                           if (result == true) {
                             _refreshMedicines(context);
                           }
@@ -102,18 +97,16 @@ class _ListOFMedicineState extends State<ListOFMedicine> with RouteAware {
                   final item = medicines[index];
                   return GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MedicineViewPage(
-                            medicineItem: item,
-                            isPharmacist: widget.isPharmacist,
-                            onUpdate: (updatedItem) {
-                              _refreshMedicines(context);
-                            },
-                            token: widget.token,
-                          ),
-                        ),
+                      context.push(
+                        '/medicine_view',
+                        extra: {
+                          'medicineItem': item,
+                          'isPharmacist': widget.isPharmacist,
+                          'onUpdate': (updatedItem) {
+                            _refreshMedicines(context);
+                          },
+                          'token': widget.token,
+                        },
                       );
                     },
                     child: Container(
@@ -158,17 +151,15 @@ class _ListOFMedicineState extends State<ListOFMedicine> with RouteAware {
                                   IconButton(
                                     icon: Icon(Icons.edit, color: Colors.blue),
                                     onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => EditMedicineScreen(
-                                            medicineItem: item,
-                                            onUpdate: (updatedItem) {
-                                              _refreshMedicines(context);
-                                            },
-                                            token: widget.token,
-                                          ),
-                                        ),
+                                      context.push(
+                                        '/editmed',
+                                        extra: {
+                                          'medicineItem': item,
+                                          'onUpdate': (updatedItem) {
+                                            _refreshMedicines(context);
+                                          },
+                                          'token': widget.token,
+                                        },
                                       );
                                     },
                                   ),

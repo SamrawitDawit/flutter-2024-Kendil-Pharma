@@ -1,14 +1,9 @@
-import 'package:blocint/Repo/listofmedrepo.dart';
-import 'package:blocint/bloc/listmedbloc/listmedbloc.dart';
-import 'package:blocint/bloc/listmedbloc/listmedevent.dart';
 import 'package:blocint/bloc/signupbloc/signupevent.dart';
 import 'package:blocint/bloc/signupbloc/signupstate.dart';
-import 'package:blocint/presentation/screens/login_signup.dart';
-import 'package:blocint/presentation/screens/mainpharmapage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:blocint/bloc/signupbloc/sign_bloc.dart';
-import 'package:blocint/presentation/screens/welcome.dart';
+import 'package:go_router/go_router.dart';
 
 // ignore: must_be_immutable
 class SignupPage extends StatelessWidget {
@@ -30,31 +25,15 @@ class SignupPage extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => WelcomePage()),
-            );
+            context.go('/');
           },
         ),
       ),
       body: BlocListener<SignupBloc, SignupState>(
         listener: (context, state) {
           if (state is SignupSuccess) {
-            final listMedicineRepository = context.read<ListMedicineRepository>();
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => BlocProvider(
-                  create: (context) => ListMedicineBloc(listMedicineRepository)
-                    ..add(FetchMedicines(state.token)),
-                  child: MainPharmaPage(
-                    isPharmacist: _selectedRole == 'Pharmacist',
-                    token: state.token,
-                  ),
-                ),
-              ),
-            );
+            final bool isPharmacist = _selectedRole == 'Pharmacist';
+            context.go('/mainpharma', extra: {'token': state.token, 'isPharmacist': isPharmacist});
           } else if (state is SignupFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.error)),
@@ -201,10 +180,7 @@ class SignupPage extends StatelessWidget {
                         ),
                       TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => LoginPage()),
-                          );
+                          context.go('/login');
                         },
                         child: Text(
                           'Already have an account? Login',

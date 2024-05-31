@@ -1,9 +1,6 @@
-import 'package:blocint/presentation/screens/create_or_edit_order.dart';
-import 'package:blocint/presentation/screens/editmed.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../models/list_medicine_model.dart';
-import 'package:blocint/bloc/listmedbloc/listmedbloc.dart';
 
 class MedicineViewPage extends StatefulWidget {
   final MedicineItem medicineItem;
@@ -75,19 +72,15 @@ class _MedicineViewPageState extends State<MedicineViewPage> {
             widget.isPharmacist
                 ? OutlinedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BlocProvider.value(
-                            value: context.read<ListMedicineBloc>(),
-                            child: EditMedicineScreen(
-                              medicineItem: medicineItem,
-                              onUpdate: _updateMedicineDetails,
-                              token: widget.token,
-                            ),
-                          ),
-                        ),
+                     context.push(
+                        '/editmed',
+                        extra: {
+                          'medicineItem': medicineItem,
+                          'onUpdate': _updateMedicineDetails,
+                          'token': widget.token,
+                        },
                       );
+                 
                     },
                     child: Text('Edit Medicine'),
                     style: OutlinedButton.styleFrom(
@@ -97,15 +90,20 @@ class _MedicineViewPageState extends State<MedicineViewPage> {
                   )
                 : OutlinedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => OrderPage(
-                            isEditing: false,
-                            medicineId: medicineItem.medid,
-                          ),
-                        ),
-                      );
+                        // ignore: unnecessary_null_comparison
+                        if (medicineItem.medid != null) {
+                        context.push(
+                          '/create_or_edit_order',
+                          extra: {
+                            'isEditing': false,
+                            'medicineId': medicineItem.medid,
+                          },
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Invalid medicine ID')),
+                        );
+                      }
                     },
                     child: Text('Order Now'),
                     style: OutlinedButton.styleFrom(

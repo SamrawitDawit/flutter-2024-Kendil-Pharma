@@ -2,14 +2,12 @@ import 'package:blocint/Repo/listofmedrepo.dart';
 import 'package:blocint/bloc/listmedbloc/listmedbloc.dart';
 import 'package:blocint/bloc/listmedbloc/listmedevent.dart';
 import 'package:blocint/presentation/screens/listmedicince.dart';
-import 'package:blocint/presentation/screens/order_list.dart';
 import 'package:blocint/presentation/screens/pharmacat.dart';
-import 'package:blocint/presentation/screens/useraccount.dart';
-import 'package:blocint/presentation/screens/welcome.dart';
 import 'package:blocint/presentation/widget/KendilAppBar.dart';
 import 'package:blocint/presentation/widget/bottomnav.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainPharmaPage extends StatelessWidget {
@@ -37,10 +35,7 @@ class MainPharmaPage extends StatelessWidget {
                   final prefs = await SharedPreferences.getInstance();
                   await prefs.remove('token');
                   await prefs.remove('userId');
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => WelcomePage()),
-                  );
+                  context.go('/');
                 },
               ),
             ),
@@ -74,35 +69,13 @@ class MainPharmaPage extends StatelessWidget {
           currentIndex: 0,
           onTap: (index) async {
             if (index == 0) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MainPharmaPage(
-                    isPharmacist: isPharmacist,
-                    token: token,
-                  ),
-                ),
-              );
+             context.go('/mainpharma', extra: {'token': token, 'isPharmacist': isPharmacist});
             } else if (index == 1) {
               final prefs = await SharedPreferences.getInstance();
               final userId = prefs.getString('userId') ?? '';
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Order2Screen(
-                    isUser: !isPharmacist,
-                    userId: userId,
-                  ),
-                ),
-              );
+              context.go('/orderlist', extra: {'isUser': !isPharmacist, 'userId': userId});
             } else if (index == 2) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => UserAccount(),
-                ),
-              );
+              context.go('/useraccount');
             }
           },
         ),

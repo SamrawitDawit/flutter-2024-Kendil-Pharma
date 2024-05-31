@@ -3,9 +3,10 @@ import 'package:blocint/bloc/orderbloc2/orderbloc2.dart';
 import 'package:blocint/bloc/orderbloc2/orderevent2.dart';
 import 'package:blocint/bloc/orderbloc2/orderstate2.dart';
 import 'package:blocint/models/ordermodel2.dart';
-import 'package:blocint/presentation/screens/create_or_edit_order.dart';
+import 'package:blocint/presentation/widget/KendilAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 
 class Order2Screen extends StatelessWidget {
@@ -24,7 +25,7 @@ class Order2Screen extends StatelessWidget {
     context.read<Order2Bloc>().add(FetchOrders2(userId, isUser));
 
     return Scaffold(
-      appBar: AppBar(title: Text('My Orders')),
+      appBar: KendilAppBar(title: Text('My Orders')),
       body: BlocConsumer<Order2Bloc, Order2State>(
         listener: (context, state) {
           if (state is Order2Error) {
@@ -110,18 +111,13 @@ class Order2Card extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.edit, color: Colors.blue),
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => OrderPage(
-                              isEditing: true,
-                              medicineId: order.medId,
-                              amount: int.tryParse(order.quantity),
-                              date: DateTime.tryParse(order.date),
-                              orderId: order.id,
-                            ),
-                          ),
-                        );
+                        context.push('/create_or_edit_order', extra: {
+                          'isEditing': true,
+                          'medicineId': order.medId,
+                          'amount': int.tryParse(order.quantity),
+                          'date': DateTime.tryParse(order.date),
+                          'orderId': order.id,
+                        });
                       },
                     ),
                   if (isUser)

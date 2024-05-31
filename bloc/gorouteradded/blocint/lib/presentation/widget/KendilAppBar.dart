@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(MaterialApp(home: KendilAppBar()));
-}
+import 'package:go_router/go_router.dart';
 
 class KendilAppBar extends StatelessWidget implements PreferredSizeWidget {
   const KendilAppBar({
@@ -42,8 +39,16 @@ class KendilAppBar extends StatelessWidget implements PreferredSizeWidget {
         automaticallyImplyLeading: false,
         leading: showBackArrow
             ? IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(Icons.arrow_left),
+                onPressed: () {
+                  if (GoRouter.of(context).canPop()) {
+                    GoRouter.of(context).pop();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('No previous page to go back to')),
+                    );
+                  }
+                },
+                icon: Icon(Icons.arrow_back),
               )
             : leadingIcon != null
                 ? IconButton(
@@ -55,7 +60,7 @@ class KendilAppBar extends StatelessWidget implements PreferredSizeWidget {
           alignment: Alignment.centerLeft,
           child: title,
         ),
-        actions: actions, // Ensure actions are passed correctly
+        actions: actions,
         backgroundColor: Colors.transparent,
         elevation: 0.0,
       ),

@@ -3,9 +3,9 @@ import 'package:blocint/bloc/useraccountviewbloc/useraccevent.dart';
 import 'package:blocint/bloc/useraccountviewbloc/useraccstate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widget/KendilAppBar.dart';
-import 'useraccountedit.dart';
 
 class UserAccount extends StatefulWidget {
   @override
@@ -40,13 +40,10 @@ class _UserAccountState extends State<UserAccount> {
             // print(state.user.name);
             return FloatingActionButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => UserAccountEditPage2(
-                    name: state.user.name,
-                    email: state.user.email,
-                  )),
-                );
+                  context.push('/useraccount/edit', extra: {
+                  'name': state.user.name,
+                  'email': state.user.email,
+                });
               },
               child: Icon(Icons.edit, color: Colors.white),
               backgroundColor: Colors.green[900],

@@ -1,31 +1,30 @@
-// main.dart
-import 'package:blocint/Repo/loginrepo.dart';
-import 'package:blocint/Repo/orderrepo.dart';
-import 'package:blocint/Repo/orderrepo2.dart';
-import 'package:blocint/Repo/useracceditrepo.dart';
-import 'package:blocint/Repo/useraccrepo.dart';
-import 'package:blocint/bloc/Loginbloc/loginbloc.dart';
+import 'package:blocint/app_route/app_router.dart';
 import 'package:blocint/bloc/listmedbloc/listmedbloc.dart';
-import 'package:blocint/bloc/orderbloc/orderbloc.dart';
-import 'package:blocint/bloc/orderbloc2/orderbloc2.dart';
-import 'package:blocint/bloc/useracceditbloc/useracceditbloc.dart';
-import 'package:blocint/dataprovider/loginprovider.dart';
-import 'package:blocint/dataprovider/orderprovider.dart';
-import 'package:blocint/dataprovider/orderprovider2.dart';
-import 'package:blocint/dataprovider/useracceditprovider.dart';
-import 'package:blocint/dataprovider/useraccviewprovider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:blocint/Repo/listofmedrepo.dart';
 import 'package:blocint/Repo/medaddrepo.dart';
-import 'package:blocint/bloc/signupbloc/sign_bloc.dart';
-import 'package:blocint/bloc/addmedbloc/addmedbloc.dart';
+import 'package:blocint/Repo/useraccrepo.dart';
+import 'package:blocint/Repo/orderrepo.dart';
+import 'package:blocint/Repo/orderrepo2.dart';
+import 'package:blocint/Repo/useracceditrepo.dart';
+import 'package:blocint/Repo/loginrepo.dart';
 import 'package:blocint/dataprovider/list_medicineprovider.dart';
 import 'package:blocint/dataprovider/medicinepostprovider.dart';
 import 'package:blocint/dataprovider/userprovider.dart';
+import 'package:blocint/dataprovider/orderprovider.dart';
+import 'package:blocint/dataprovider/orderprovider2.dart';
+import 'package:blocint/dataprovider/useracceditprovider.dart';
+import 'package:blocint/dataprovider/useraccviewprovider.dart';
+import 'package:blocint/dataprovider/loginprovider.dart';
+import 'package:blocint/bloc/signupbloc/sign_bloc.dart';
+import 'package:blocint/bloc/addmedbloc/addmedbloc.dart';
 import 'package:blocint/bloc/useraccountviewbloc/useraccbloc.dart';
-import 'presentation/screens/welcome.dart';
+import 'package:blocint/bloc/orderbloc/orderbloc.dart';
+import 'package:blocint/bloc/orderbloc2/orderbloc2.dart';
+import 'package:blocint/bloc/useracceditbloc/useracceditbloc.dart';
+import 'package:blocint/bloc/Loginbloc/loginbloc.dart';
 
 void main() {
   final dataProvider = DataProvider(baseUrl: 'http://localhost:3009');
@@ -44,13 +43,14 @@ void main() {
     dataProvider: Order2DataProvider(baseUrl: 'http://localhost:3009'),
   );
 
-  final userDataProvider2 = UserDataProvider2(baseUrl: 'http://localhost:3009'); // Add this line
-  final userRepository2 = UserRepository2(dataProvider: userDataProvider2); 
+  final userDataProvider2 = UserDataProvider2(baseUrl: 'http://localhost:3009');
+  final userRepository2 = UserRepository2(dataProvider: userDataProvider2);
 
-   final loginDataProvider = LoginDataProvider(baseUrl: 'http://localhost:3009');
+  final loginDataProvider = LoginDataProvider(baseUrl: 'http://localhost:3009');
   final loginRepository = LoginRepository(dataProvider: loginDataProvider);
-  
-  
+
+  final appRouter = AppRouter(listMedicineRepository: listMedicineRepository);
+
   runApp(MyApp(
     dataProvider: dataProvider,
     listMedicineRepository: listMedicineRepository,
@@ -60,6 +60,7 @@ void main() {
     order2Repository: order2Repository,
     userRepository2: userRepository2,
     loginRepository: loginRepository,
+    appRouter: appRouter,
   ));
 }
 
@@ -72,7 +73,7 @@ class MyApp extends StatelessWidget {
   final Order2Repository order2Repository;
   final UserRepository2 userRepository2;
   final LoginRepository loginRepository;
-
+  final AppRouter appRouter;
 
   const MyApp({
     required this.dataProvider,
@@ -82,7 +83,8 @@ class MyApp extends StatelessWidget {
     required this.orderRepository,
     required this.order2Repository,
     required this.userRepository2,
-     required this.loginRepository,
+    required this.loginRepository,
+    required this.appRouter,
   });
 
   @override
@@ -109,19 +111,19 @@ class MyApp extends StatelessWidget {
         BlocProvider<ListMedicineBloc>(
           create: (context) => ListMedicineBloc(listMedicineRepository),
         ),
-        BlocProvider<UserBloc2>( // Add this block
+        BlocProvider<UserBloc2>(
           create: (context) => UserBloc2(userRepository: userRepository2),
         ),
         BlocProvider<LoginBloc>(
           create: (context) => LoginBloc(loginRepository: loginRepository),
         ),
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
         title: 'Pharmacy App',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: WelcomePage(),
+        routerConfig: appRouter.router,
       ),
     );
   }
